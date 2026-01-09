@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"lazyhttp/pkg/gui"
@@ -21,16 +20,20 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(message tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
+	var cmds []tea.Cmd
 	switch msg := message.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "q", "esc":
+		case "q":
 			return m, tea.Quit
-		case "enter":
-			log.Println("Enter Pressed")
 		}
 	}
-	return m, nil
+
+	m.sidebar, cmd = m.sidebar.Update(message)
+	cmds = append(cmds, cmd)
+
+	return m, tea.Batch(cmds...)
 }
 
 func (m model) View() string {
