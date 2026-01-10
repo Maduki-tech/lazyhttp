@@ -10,6 +10,7 @@ type errMsg error
 type BodyModel struct {
 	textarea textarea.Model
 	err      error
+	focused  bool
 }
 
 func NewBody() BodyModel {
@@ -49,4 +50,13 @@ func (m BodyModel) Update(message tea.Msg) (BodyModel, tea.Cmd) {
 
 func (m BodyModel) View() string {
 	return m.textarea.View()
+}
+
+func (m *BodyModel) SetFocused(focused bool) {
+	m.focused = focused
+	if focused {
+		m.textarea.Focus()
+	} else {
+		m.textarea.Blur()
+	}
 }

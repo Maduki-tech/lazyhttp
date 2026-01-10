@@ -47,26 +47,40 @@ func (m AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		case "tab":
 			// Switch between views
-			if m.activeView == SidebarView {
+			switch m.activeView {
+			case SidebarView:
 				m.activeView = Url
 				m.sidebar.SetFocused(false)
 				m.url.SetFocused(true)
-			} else {
-				m.activeView = SidebarView
-				m.sidebar.SetFocused(true)
+			case Url:
+				m.activeView = Body
+				m.body.SetFocused(true)
 				m.url.SetFocused(false)
+			case Body:
+				m.activeView = Result
+				m.result.SetFocused(true)
+				m.url.SetFocused(false)
+			case Result:
+				m.activeView = SidebarView
+				m.result.SetFocused(false)
+				m.sidebar.SetFocused(true)
 			}
 			return m, nil
 		}
 	}
 
-	// Only update the active view
 	switch m.activeView {
 	case SidebarView:
 		m.sidebar, cmd = m.sidebar.Update(message)
 		cmds = append(cmds, cmd)
 	case Url:
 		m.url, cmd = m.url.Update(message)
+		cmds = append(cmds, cmd)
+	case Body:
+		m.body, cmd = m.body.Update(message)
+		cmds = append(cmds, cmd)
+	case Result:
+		m.result, cmd = m.result.Update(message)
 		cmds = append(cmds, cmd)
 	}
 

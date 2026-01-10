@@ -8,6 +8,7 @@ import (
 
 type ResultModel struct {
 	viewport viewport.Model
+	focused  bool
 }
 
 const data = `
@@ -45,4 +46,8 @@ func (m ResultModel) Update(message tea.Msg) (ResultModel, tea.Cmd) {
 
 func (m ResultModel) View() string {
 	return m.viewport.View()
+}
+
+func (m *ResultModel) SetFocused(focused bool) {
+	m.focused = focused
 }
