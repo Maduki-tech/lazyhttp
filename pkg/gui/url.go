@@ -3,11 +3,17 @@ package gui
 import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
+
+var urlStyle = lipgloss.NewStyle().
+	BorderStyle(lipgloss.RoundedBorder()).
+	BorderForeground(lipgloss.Color("75"))
 
 type URLModel struct {
 	focused   bool
 	textInput textinput.Model
+	width     int
 }
 
 func initModel() textinput.Model {
@@ -46,7 +52,9 @@ func (m URLModel) Update(message tea.Msg) (URLModel, tea.Cmd) {
 }
 
 func (m URLModel) View() string {
-	return m.textInput.View()
+	return urlStyle.
+		Width(m.width - 2).
+		Render(m.textInput.View())
 }
 
 func (m *URLModel) SetFocused(focused bool) {
@@ -56,4 +64,8 @@ func (m *URLModel) SetFocused(focused bool) {
 	} else {
 		m.textInput.Blur()
 	}
+}
+
+func (m *URLModel) SetSize(widht int) {
+	m.width = widht
 }

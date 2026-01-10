@@ -3,14 +3,20 @@ package gui
 import (
 	"github.com/charmbracelet/bubbles/textarea"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
+
+var bodyStyle = lipgloss.NewStyle().
+	BorderStyle(lipgloss.RoundedBorder()).
+	BorderForeground(lipgloss.Color("75"))
 
 type errMsg error
 
 type BodyModel struct {
-	textarea textarea.Model
-	err      error
-	focused  bool
+	textarea      textarea.Model
+	err           error
+	focused       bool
+	width, height int
 }
 
 func NewBody() BodyModel {
@@ -49,7 +55,10 @@ func (m BodyModel) Update(message tea.Msg) (BodyModel, tea.Cmd) {
 }
 
 func (m BodyModel) View() string {
-	return m.textarea.View()
+	return bodyStyle.
+		Width(m.width).
+		Height(m.height).
+		Render(m.textarea.View())
 }
 
 func (m *BodyModel) SetFocused(focused bool) {
@@ -59,4 +68,9 @@ func (m *BodyModel) SetFocused(focused bool) {
 	} else {
 		m.textarea.Blur()
 	}
+}
+
+func (m *BodyModel) SetSize(widht, height int) {
+	m.height = height
+	m.width = widht
 }

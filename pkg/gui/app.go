@@ -9,7 +9,7 @@ type ActiveView int
 
 const (
 	SidebarView ActiveView = iota
-	Url
+	URL
 	Body
 	Result
 )
@@ -49,10 +49,10 @@ func (m AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 			// Switch between views
 			switch m.activeView {
 			case SidebarView:
-				m.activeView = Url
+				m.activeView = URL
 				m.sidebar.SetFocused(false)
 				m.url.SetFocused(true)
-			case Url:
+			case URL:
 				m.activeView = Body
 				m.body.SetFocused(true)
 				m.url.SetFocused(false)
@@ -67,13 +67,18 @@ func (m AppModel) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 		}
+	case tea.WindowSizeMsg:
+		m.sidebar.SetSize(msg.Width/3, msg.Height)
+		m.url.SetSize(msg.Width * 2 / 3)
+		m.body.SetSize(msg.Width*2/3-2, msg.Height/2)
+		m.result.SetSize(msg.Width*2/3, msg.Height/2-5)
 	}
 
 	switch m.activeView {
 	case SidebarView:
 		m.sidebar, cmd = m.sidebar.Update(message)
 		cmds = append(cmds, cmd)
-	case Url:
+	case URL:
 		m.url, cmd = m.url.Update(message)
 		cmds = append(cmds, cmd)
 	case Body:

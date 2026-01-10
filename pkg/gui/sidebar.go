@@ -4,11 +4,17 @@ package gui
 import (
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
+var style = lipgloss.NewStyle().
+	BorderStyle(lipgloss.RoundedBorder()).
+	BorderForeground(lipgloss.Color("75"))
+
 type SidebarModel struct {
-	focused bool
-	table   table.Model
+	focused       bool
+	table         table.Model
+	width, height int
 }
 
 func NewSidebar() SidebarModel {
@@ -37,6 +43,20 @@ func newTable() table.Model {
 		table.WithFocused(true),
 	)
 
+	s := table.DefaultStyles()
+
+	s.Header = s.Header.
+		BorderStyle(lipgloss.NormalBorder()).
+		BorderForeground(lipgloss.Color("81")).
+		BorderBottom(true).
+		Bold(false)
+	s.Selected = s.Selected.
+		Foreground(lipgloss.Color("229")).
+		Background(lipgloss.Color("57")).
+		Bold(false)
+
+	t.SetStyles(s)
+
 	return t
 }
 
@@ -60,7 +80,10 @@ func (m SidebarModel) Update(message tea.Msg) (SidebarModel, tea.Cmd) {
 }
 
 func (m SidebarModel) View() string {
-	return m.table.View()
+	return style.
+		Height(m.height - 2).
+		Width(m.width - 2).
+		Render(m.table.View())
 }
 
 func (m *SidebarModel) SetFocused(focused bool) {
@@ -69,4 +92,9 @@ func (m *SidebarModel) SetFocused(focused bool) {
 	if !focused {
 		m.table.Blur()
 	}
+}
+
+func (m *SidebarModel) SetSize(widht, height int) {
+	m.height = height
+	m.width = widht
 }

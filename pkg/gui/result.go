@@ -6,9 +6,12 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+var resultStyle = lipgloss.NewStyle()
+
 type ResultModel struct {
-	viewport viewport.Model
-	focused  bool
+	viewport      viewport.Model
+	focused       bool
+	width, height int
 }
 
 const data = `
@@ -19,10 +22,10 @@ const data = `
 func NewResult() ResultModel {
 	const width = 78
 
-	vp := viewport.New(width, 20)
+	vp := viewport.New(width, 8)
 	vp.Style = lipgloss.NewStyle().
 		BorderStyle(lipgloss.RoundedBorder()).
-		BorderForeground(lipgloss.Color("62")).
+		BorderForeground(lipgloss.Color("75")).
 		PaddingRight(2)
 
 	vp.SetContent(data)
@@ -45,9 +48,19 @@ func (m ResultModel) Update(message tea.Msg) (ResultModel, tea.Cmd) {
 }
 
 func (m ResultModel) View() string {
-	return m.viewport.View()
+	return resultStyle.
+		Width(m.width).
+		Height(m.height).
+		Render(m.viewport.View())
 }
 
 func (m *ResultModel) SetFocused(focused bool) {
 	m.focused = focused
+}
+
+func (m *ResultModel) SetSize(widht, height int) {
+	// m.height = height
+	// m.width = widht
+	m.viewport.Height = height
+	m.viewport.Width = widht
 }
