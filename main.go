@@ -7,38 +7,7 @@ import (
 	"lazyhttp/pkg/gui"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
-
-type model struct {
-	sidebar  gui.SidebarModel
-	mainview gui.MainModel
-}
-
-func (m model) Init() tea.Cmd {
-	return nil
-}
-
-func (m model) Update(message tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
-	var cmds []tea.Cmd
-	switch msg := message.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "q":
-			return m, tea.Quit
-		}
-	}
-
-	m.sidebar, cmd = m.sidebar.Update(message)
-	cmds = append(cmds, cmd)
-
-	return m, tea.Batch(cmds...)
-}
-
-func (m model) View() string {
-	return lipgloss.JoinHorizontal(lipgloss.Top, m.sidebar.View(), m.mainview.View())
-}
 
 func main() {
 	f, err := tea.LogToFile("debug.log", "debug")
@@ -48,10 +17,7 @@ func main() {
 	}
 	defer f.Close()
 
-	m := model{
-		sidebar:  gui.NewSidebar(),
-		mainview: gui.NewMainView(),
-	}
+	m := gui.NewAppModel()
 	p := tea.NewProgram(m, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		panic(err)

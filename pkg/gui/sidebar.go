@@ -49,12 +49,6 @@ func (m SidebarModel) Update(message tea.Msg) (SidebarModel, tea.Cmd) {
 	switch msg := message.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "esc":
-			if m.table.Focused() {
-				m.table.Blur()
-			} else {
-				m.table.Focus()
-			}
 		case "enter":
 			return m, tea.Batch(
 				tea.Printf("Lets do this %s", m.table.SelectedRow()[1]),
@@ -67,4 +61,12 @@ func (m SidebarModel) Update(message tea.Msg) (SidebarModel, tea.Cmd) {
 
 func (m SidebarModel) View() string {
 	return m.table.View()
+}
+
+func (m *SidebarModel) SetFocused(focused bool) {
+	m.focused = focused
+	m.table.Focus()
+	if !focused {
+		m.table.Blur()
+	}
 }
